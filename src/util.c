@@ -22,8 +22,10 @@ void UTIL_printArray(int x, int y, int* arr){
     }
 }
 
-double **UTIL_maxPooling(double data**, int w, int h, double filter**, int f_size, int stride) {
+double **UTIL_maxPooling(double **data, int w, int h, int f_size, int stride) {
 	double **output;
+    int i, j;
+    int max;
 
 	//-- Compute size of output
 	int o_h = (h - f_size) / stride;
@@ -31,9 +33,23 @@ double **UTIL_maxPooling(double data**, int w, int h, double filter**, int f_siz
 	
 	//-- Allocate the array
 	output = (double **)malloc(o_h * sizeof(double *));
-    for (i=0; i < o_h; i++) {
+    for (i = 0; i < o_h; i++) {
 		output[i] = (double *)malloc(o_w * sizeof(double));
 	}
 
+    for (i = 0; i + stride < o_h; i += stride) {
+        for (j = 0; j + stride < o_w; j += stride) {
+            max = 0;
+            for (k = 0; k < stride; k++) {
+                for (l = 0; l < stride; l++) {
+                    if (data[k][l] >= max) {
+                        max = data[k][l];
+                    }
+                }
+            }
+            output[i][j] = max;
+        }
+    }
 
+    return output;
 }
